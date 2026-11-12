@@ -1,0 +1,4 @@
+*.sqlite*
+/resources/css/app.css
+/routes/console.php
+/.editorconfig
