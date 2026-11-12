@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Usuario;
 class UsuariosController extends Controller
 {
     /**
@@ -20,7 +20,10 @@ class UsuariosController extends Controller
      */
     public function create()
     {
-        return view('usuarios.create');
+        $empresa = Empresa::all();
+
+    return view('usuarios.create', compact('empresas'));
+
     }
 
     /**
@@ -29,13 +32,26 @@ class UsuariosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'email' => 'required|email|unique:usuario,email',
-            'telefono' => 'nullable|string|max:20'
+        'username' => 'required',
+        'password' => 'required|min:8',
+        'rol' => 'required',
+        'activo' => 'required',
+        'fecha_creacion' => 'required|date',
+        'id_empresa' => 'required'
         ]);
 
-        Usuario::create($request->all());
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente.');
+        Usuario::create($request->validated());
+   Usuario::create([
+        'username' => $request->username,
+        'password' => Hash::make($request->password),
+        'rol' => $request->rol,
+        'activo' => $request->activo,
+        'fecha_creacion' => $request->fecha_creacion,
+        'id_empresa' => $request->id_empresa,
+    ]);
+
+    return redirect()->route('usuarios.index')
+        ->with('success', 'Usuario registrado correctamente.');
     }
 
     /**
